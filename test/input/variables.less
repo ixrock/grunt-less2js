@@ -1,0 +1,20 @@
+// Sample of less-css variables
+@import "other";
+
+// colors
+@baseColor: black;
+@hexColor: #445566;
+@rgbaColor: rgba(255, 0, 0, .5);
+@lightColor: lighten(@baseColor, 25%);
+
+// dimensions
+@fontSize: 1em;
+@someValue: 25;
+@blurRadius: 5px;
+@doubleRadius: @blurRadius * 2;
+@maxWidth: 50%;
+
+// expressions
+@boxShadow: 0 0 @blurRadius black;
+@someText: 'Some value is @{someValue}';
+@fontBase: @fontSize ~"Helvetica Neue, Arial, sans-serif";
