@@ -32,7 +32,8 @@ module.exports = function(grunt) {
     less2js: {
       json: {
         options: {
-          format: 'json' // by default
+          format: 'json', // by default,
+          ignoreWithPrefix: '_' // for testing
         },
         files: {
           'test/output/variables.json': 'test/input/variables.less'
