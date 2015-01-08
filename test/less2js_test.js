@@ -54,5 +54,12 @@ exports.less2js = {
     });
 
     test.done();
+  },
+  test_ignore_prefix: function(test) {
+    var json = grunt.file.readJSON('test/output/variables.json');
+
+    test.ok(!json.hasOwnProperty('_inverse'));
+
+    test.done();
   }
 };

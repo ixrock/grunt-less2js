@@ -17,6 +17,7 @@ module.exports = function (grunt) {
     var options = this.options({
       banner: '// DO NOT EDIT! GENERATED AUTOMATICALLY with grunt-less2js',
       format: 'json',  // available values: "json", "ng"
+      ignorePrefix: '', // any valid string e.g. "_" would ignore @_base
       ngModule: '',    // angular-js module name (only when format="ng")
       ngConstant: ''   // angular-js injectable constant name (only when format="ng")
     });
@@ -34,12 +35,16 @@ module.exports = function (grunt) {
         parser.parse(content, function (err, tree) {
           var env = new less.tree.evalEnv();
           var ruleset = tree.eval(env); // jshint ignore:line
+          var regex = options.ignorePrefix ? new RegExp('^' + options.ignorePrefix) : null;
 
           ruleset.rules.forEach(function (rule) {
             if (rule.variable) {
               var name = rule.name.substr(1); // remove "@"
-              var value = rule.value.value[0]; // can be less.tree.Color, less.tree.Expression, etc.
-              lessVars[name] = value.toCSS();
+
+              if (!regex || !regex.test(name)) {
+                var value = rule.value.value[0]; // can be less.tree.Color, less.tree.Expression, etc.
+                lessVars[name] = value.toCSS();
+              }
             }
           });
         });
