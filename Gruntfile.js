@@ -33,7 +33,7 @@ module.exports = function(grunt) {
       json: {
         options: {
           format: 'json', // by default,
-          ignorePrefix: '_' // for testing
+          ignoreWithPrefix: '_' // for testing
         },
         files: {
           'test/output/variables.json': 'test/input/variables.less'

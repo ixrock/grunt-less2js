@@ -50,11 +50,11 @@ Default value: `'json'`
 A type of output file contents. 
 Available values: `'json'` (basic valid json), `'ng'` (angular-js module)
 
-#### options.ignorePrefix
+#### options.ignoreWithPrefix
 Type: `String`
 Default value: `''`
 
-If a variable starts with the ignorePrefix, it will be omitted from the JSON file.
+If a variable starts with the ignoreWithPrefix, it will be omitted from the JSON file.
 For example: `_` would ignore `@_base`.
 
 #### options.ngModule
