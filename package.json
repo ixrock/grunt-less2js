@@ -1,7 +1,7 @@
 {
   "name": "grunt-less2js",
   "description": "Convert some variables.less to JSON to be used in Javascript",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "homepage": "https://github.com/ixrock/grunt-less2js",
   "author": {
     "name": "Roman Karlov",
