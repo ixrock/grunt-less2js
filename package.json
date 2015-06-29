@@ -1,7 +1,7 @@
 {
   "name": "grunt-less2js",
   "description": "Convert some variables.less to JSON to be used in Javascript",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "homepage": "https://github.com/ixrock/grunt-less2js",
   "author": {
     "name": "Roman Karlov",
@@ -27,7 +27,8 @@
     "test": "grunt test"
   },
   "dependencies": {
-    "less": "^1.7.3"
+    "less": "^1.7.3",
+    "lodash": "^3.9.3"
   },
   "devDependencies": {
     "grunt": "~0.4.5",
@@ -40,6 +41,10 @@
     "less": "^1.7.3"
   },
   "keywords": [
-    "gruntplugin", "less", "css", "json", "angular-js"
+    "gruntplugin",
+    "less",
+    "css",
+    "json",
+    "angular-js"
   ]
 }

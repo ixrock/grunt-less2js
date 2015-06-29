@@ -1,6 +1,7 @@
 'use strict';
 
 var grunt = require('grunt');
+var _ = require('lodash');
 
 /*
   ======== A Handy Little Nodeunit Reference ========
@@ -22,43 +23,51 @@ var grunt = require('grunt');
     test.ifError(value)
 */
 
-var mockJson = {
-  "otherValue": "10px",
-  "otherColor": "#ff0000",
-  "baseColor": "#000000",
-  "hexColor": "#445566",
-  "rgbaColor": "rgba(255, 0, 0, 0.5)",
-  "lightColor": "#404040",
-  "fontSize": "1em",
-  "someValue": "25",
-  "blurRadius": "5px",
-  "doubleRadius": "10px",
-  "maxWidth": "50%",
-  "boxShadow": "0 0 5px #000000",
-  "someText": "'Some value is 25'",
-  "fontBase": "1em Helvetica Neue, Arial, sans-serif"
-};
-
 exports.less2js = {
   setUp: function(done) {
     // setup here if necessary
     done();
   },
-  test_json_output: function(test) {
-    var json = grunt.file.readJSON('test/output/variables.json');
-
-    test.ok(json.hasOwnProperty('otherColor'), 'File import() works fine');
-
-    Object.keys(mockJson).forEach(function (key) {
-        test.strictEqual(json[key], mockJson[key], 'Test json-value: '+ key);
-    });
-
+  it_exports_valid_json: function (test) {
+    var outputJson = grunt.file.readJSON('test/output/variables.json');
+    test.ok(_.isPlainObject(outputJson), 'Export as JSON works fine');
     test.done();
   },
-  test_ignore_prefix: function(test) {
-    var json = grunt.file.readJSON('test/output/variables.json');
+  it_exports_nodejs_module: function (test) {
+    var outputJson = require('../test/output/node-vars.js');
+    test.ok(_.isPlainObject(outputJson), 'Export as common-js/node-js module works fine');
+    test.done();
+  },
+  test_other_options: function(test) {
+    var normalJson = grunt.file.readJSON('test/output/variables.json');
+    var modifiedJson = require('../test/output/node-vars.js');
 
-    test.ok(!json.hasOwnProperty('_inverse'));
+    // export data from imported files
+    test.ok(modifiedJson.varFromImport, 'Export variables from imported external less-files');
+
+    // ignore with prefix
+    test.ok(normalJson._ignoreWithPrefix, 'Test of `options.ignoreWithPrefix = ""`');
+    test.ok(_.isUndefined(modifiedJson._ignoreWithPrefix), 'Test of `options.ignoreWithPrefix = "_"`');
+
+    // camel case
+    test.ok(normalJson['camel-case'], 'Test of `options.camelCase = false`');
+    test.ok(_.isUndefined(normalJson.camelCase), 'Test of `options.camelCase = false`');
+    test.ok(modifiedJson.camelCase, 'Test of `options.camelCase = true`');
+
+    // parse numbers
+    test.ok(_.isString(normalJson.parsedNumber), 'Test of `options.parseNumbers = false`');
+    test.ok(_.isNumber(modifiedJson.parsedNumber), 'Test of `options.parseNumbers = true`');
+
+    // unwrap bad strings
+    test.ok(normalJson.unwrappedString === '"string"', 'Test of `options.unwrapStrings = false`');
+    test.ok(normalJson.unwrappedString2 === "'string'", 'Test of `options.unwrapStrings = false`');
+    test.ok(modifiedJson.unwrappedString === 'string', 'Test of `options.unwrapStrings = true`');
+    test.ok(modifiedJson.unwrappedString2 === 'string', 'Test of `options.unwrapStrings = true`');
+
+    // modified vars
+    test.ok(normalJson.maxWidth === '50%', 'Test with default (empty) options.modifyVars');
+    test.ok(modifiedJson.maxWidth === '100%', 'Test with extra options.modifyVars object');
+    test.ok(modifiedJson.helloFromGrunt, 'Test with extra options.modifyVars object');
 
     test.done();
   }

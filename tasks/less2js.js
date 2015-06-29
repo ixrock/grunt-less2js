@@ -9,21 +9,26 @@
 'use strict';
 var path = require('path');
 var less = require('less');
+var _ = require('lodash');
 
 module.exports = function (grunt) {
 
   grunt.registerMultiTask('less2js', function () {
     var lessVars = {};
     var options = this.options({
-      banner: '// DO NOT EDIT! GENERATED AUTOMATICALLY with grunt-less2js',
-      format: 'json',  // available values: "json", "ng"
+      banner:              '// DO NOT EDIT! GENERATED AUTOMATICALLY with grunt-less2js',
+      format: 'json',       // available values: "json", "ng", "commonjs"
+      ngModule: '',         // angular-js module name (applicable only when format="ng")
+      ngConstant: '',       // angular-js injectable constant name (applicable only when format="ng")
       ignoreWithPrefix: '', // any valid string e.g. "_" would ignore @_base
-      ngModule: '',    // angular-js module name (only when format="ng")
-      ngConstant: ''   // angular-js injectable constant name (only when format="ng")
+      camelCase: false,     // convert variable names to camel-case format (@my-var in less => myVar in js)
+      parseNumbers: false,  // convert strings that contains only numbers to normal decimal format
+      unwrapStrings: false, // remove extra quotes, ex. for @something: 'my string' by default => "'my string'"
+      modifyVars: {}        // override output result with predefined set of variables in the task
     });
 
+    // parse, eval and save less-variables to js-object
     this.files.forEach(function (file) {
-      // parse, eval and save less variables
       file.src.forEach(function (src) {
         var content = grunt.file.read(src);
         var parser = new less.Parser({
@@ -35,31 +40,69 @@ module.exports = function (grunt) {
         parser.parse(content, function (err, tree) {
           var env = new less.tree.evalEnv();
           var ruleset = tree.eval(env); // jshint ignore:line
-          var prefix = options.ignoreWithPrefix || null;
 
           ruleset.rules.forEach(function (rule) {
             if (rule.variable) {
               var name = rule.name.substr(1); // remove "@"
-
-              if (!prefix || name.substr(0, prefix.length) !== prefix) {
-                var value = rule.value.value[0]; // can be less.tree.Color, less.tree.Expression, etc.
-                lessVars[name] = value.toCSS();
-              }
+              var value = rule.value.value[0]; // can be less.tree.Color, less.tree.Expression, etc.
+              lessVars[name] = value.toCSS();
             }
           });
         });
       });
 
-      // process and write the data
+      // process the data with current options
+      if (options.ignoreWithPrefix) {
+        _.forEach(lessVars, function (value, name) {
+          if (name.indexOf(options.ignoreWithPrefix) === 0) {
+            delete lessVars[name];
+          }
+        });
+      }
+
+      if (options.camelCase) {
+        lessVars = _.reduce(lessVars, function (lessVars, value, name) {
+          lessVars[_.camelCase(name)] = value;
+          return lessVars;
+        }, {});
+      }
+
+      if (options.unwrapStrings) {
+        var badStringInString = /^('|").*?\1$/;
+        _.forEach(lessVars, function (value, name) {
+          if (value.match(badStringInString)) {
+            lessVars[name] = value.replace(/^['"]|['"]$/g, '');
+          }
+        });
+      }
+
+      if (options.parseNumbers) {
+        var isNumber = /^\d+$/;
+        _.forEach(lessVars, function (value, name) {
+          if (value.match(isNumber)) {
+            lessVars[name] = parseInt(value, 10);
+          }
+        });
+      }
+
+      // final preparations and saving the output
+      _.extend(lessVars, options.modifyVars);
       var output = JSON.stringify(lessVars, null, 2);
       var outputFile = file.dest;
+      var outputType = options.format;
 
-      if (options.format === 'ng') {
-        var ngModule = options.ngModule || outputFile;
-        var ngConstant = options.ngConstant || path.basename(outputFile, '.js');
-        output = 'angular.module("' + ngModule + '", []).constant("' + ngConstant + '", ' + output + ');';
+      switch (outputType) {
+        case 'ng':
+          var ngModule = options.ngModule || outputFile;
+          var ngConstant = options.ngConstant || path.basename(outputFile, '.js');
+          output = 'angular.module("' + ngModule + '", []).constant("' + ngConstant + '", ' + output + ');';
+          break;
+        case 'commonjs':
+          output = 'module.exports = ' + output + ';';
+          break;
       }
-      if (options.banner && options.format !== 'json') {
+
+      if (options.banner && outputType !== 'json') {
         output = [options.banner, output].join('\n');
       }
 

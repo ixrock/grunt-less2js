@@ -48,7 +48,7 @@ Type: `String`
 Default value: `'json'`
 
 A type of output file contents. 
-Available values: `'json'` (basic valid json), `'ng'` (angular-js module)
+Available values: `'json'` (basic valid json), `'ng'` (angular-js module), `'commonjs'` (node-js module) 
 
 #### options.ignoreWithPrefix
 Type: `String`
@@ -57,19 +57,46 @@ Default value: `''`
 If a variable starts with the ignoreWithPrefix, it will be omitted from the JSON file.
 For example: `_` would ignore `@_base`.
 
+#### options.camelCase
+Type: `Boolean`
+Default value: `false`
+
+Converts variable name into the camel-case format which is most convenient to use inside JSON/JS.
+Examples: @--foo-bar => fooBar, @_foo-bar => fooBar, @_--FooBarEXT => fooBarExt 
+
+#### options.parseNumbers
+Type: `Boolean`
+Default value: `false`
+
+All data-types exported from less files are strings.
+The option converts string-numbers into ordinary decimal numbers (base 10).
+
+#### options.unwrapStrings
+Type: `Boolean`
+Default value: `false`
+
+Less variables, defined as @myVar: "looks like a string" by default will be imported with redundant quotes.
+To avoid this crap, don't use quotes or enable this option to remove quotes from the beginning and end of the output string.
+
+#### options.modifyVars
+Type: `Object`
+Default value: `{}`
+
+Allows to modify (override or add) variables to resulted output json (after getting through all other passed options).
+
 #### options.ngModule
 Type: `String`
 Default value: `'%path to output file%'`
 
 A name of output angular.js module
-This option actual only with options.format = `'ng'`
+This option applicable only with options.format = `'ng'`
 
 #### options.ngConstant
 Type: `String`
 Default value: `'%output filename without extension%'`
 
 A name of constant service for the output angular.js module
-This option actual only with options.format = `'ng'`
+This option applicable only with options.format = `'ng'`
 
 ### Usage Examples
 
@@ -91,6 +118,21 @@ less2js: {
     },
     src: 'test/input/variables.less',
     dest: 'test/output/variables.js'
+  },
+  node: {
+    options: {
+      format: 'commonjs',
+      ignoreWithPrefix: '_',
+      camelCase: true,
+      parseNumbers: true,
+      unwrapStrings: true,
+      modifyVars: {
+        maxWidth: '100%',
+        helloFromGrunt: true
+      }
+    },
+    src: 'test/input/variables.less',
+    dest: 'test/output/node-vars.js'
   }
 }
 ```

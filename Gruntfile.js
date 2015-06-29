@@ -32,8 +32,7 @@ module.exports = function(grunt) {
     less2js: {
       json: {
         options: {
-          format: 'json', // by default,
-          ignoreWithPrefix: '_' // for testing
+          format: 'json' // by default,
         },
         files: {
           'test/output/variables.json': 'test/input/variables.less'
@@ -41,12 +40,27 @@ module.exports = function(grunt) {
       },
       angular: {
         options: {
-          format: 'ng',
+          format: 'ng', // angular-js v1.x
           ngModule: 'myModule', // by default = path to the destination file
           ngConstant: 'myConfig' // by default = name of the destination file without extension
         },
         src: 'test/input/variables.less',
-        dest: 'test/output/variables.js'
+        dest: 'test/output/angular-vars.js'
+      },
+      nodejs: {
+        options: {
+          format: 'commonjs', // common-js, node-js
+          ignoreWithPrefix: '_',
+          camelCase: true,
+          parseNumbers: true,
+          unwrapStrings: true,
+          modifyVars: {
+            maxWidth: '100%',
+            helloFromGrunt: true
+          }
+        },
+        src: 'test/input/variables.less',
+        dest: 'test/output/node-vars.js'
       }
     },
 

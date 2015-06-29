@@ -9,15 +9,28 @@
 
 // dimensions
 @fontSize: 1em;
-@someValue: 25;
+@someNumericValue: 25;
+@justANumber: 1000;
 @blurRadius: 5px;
 @doubleRadius: @blurRadius * 2;
 @maxWidth: 50%;
 
 // expressions
 @boxShadow: 0 0 @blurRadius black;
-@someText: 'Some value is @{someValue}';
+@someText: 'Some value is @{someNumericValue}';
 @fontBase: @fontSize ~"Helvetica Neue, Arial, sans-serif";
 
 // ignored prefix
 @_inverse: '#ccc';
+
+// invalid js names
+@my-name: 'john smith';
+@-other-bad-js-name: hello world;
+
+// some test-cases for specific options
+@_ignoreWithPrefix: must be ignored;
+@camel-case: must be exported as camelCase;
+@parsedNumber: 100;
+@unwrappedString: "string";
+@unwrappedString2: 'string';
+
