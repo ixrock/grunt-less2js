@@ -24,7 +24,7 @@ module.exports = function (grunt) {
       camelCase: false,     // convert variable names to camel-case format (@my-var in less => myVar in js)
       parseNumbers: false,  // convert strings that contains only numbers to normal decimal format
       unwrapStrings: false, // remove extra quotes, ex. for @something: 'my string' by default => "'my string'"
-      modifyVars: {}        // override output result with predefined set of variables in the task
+      modifyVars: null      // override output result with predefined set of variables in the task
     });
 
     // parse, eval and save less-variables to js-object
@@ -36,6 +36,13 @@ module.exports = function (grunt) {
           paths: path.dirname(path.resolve(src)),
           filename: path.basename(src)
         });
+
+        if (_.isObject(options.modifyVars)) {
+          content += _.reduce(options.modifyVars, function (content, value, name) {
+            content += '\n@' + name + ':' + value + ';';
+            return content;
+          }, '');
+        }
 
         parser.parse(content, function (err, tree) {
           var env = new less.tree.evalEnv();
@@ -86,7 +93,6 @@ module.exports = function (grunt) {
       }
 
       // final preparations and saving the output
-      _.extend(lessVars, options.modifyVars);
       var output = JSON.stringify(lessVars, null, 2);
       var outputFile = file.dest;
       var outputType = options.format;

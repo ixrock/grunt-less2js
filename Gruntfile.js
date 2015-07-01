@@ -56,7 +56,8 @@ module.exports = function(grunt) {
           unwrapStrings: true,
           modifyVars: {
             maxWidth: '100%',
-            helloFromGrunt: true
+            helloFromGrunt: true,
+            darkenRed10Percents: 'darken(red, 10%)'
           }
         },
         src: 'test/input/variables.less',

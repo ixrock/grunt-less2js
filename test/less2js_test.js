@@ -68,6 +68,7 @@ exports.less2js = {
     test.ok(normalJson.maxWidth === '50%', 'Test with default (empty) options.modifyVars');
     test.ok(modifiedJson.maxWidth === '100%', 'Test with extra options.modifyVars object');
     test.ok(modifiedJson.helloFromGrunt, 'Test with extra options.modifyVars object');
+    test.ok(modifiedJson.darkenRed10Percents === '#cc0000', 'Test with extra options.modifyVars object');
 
     test.done();
   }

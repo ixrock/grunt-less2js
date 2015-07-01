@@ -80,7 +80,7 @@ To avoid this crap, don't use quotes or enable this option to remove quotes from
 
 #### options.modifyVars
 Type: `Object`
-Default value: `{}`
+Default value: `null`
 
 Allows to modify (override or add) variables to resulted output json (after getting through all other passed options).
 
@@ -128,7 +128,7 @@ less2js: {
       unwrapStrings: true,
       modifyVars: {
         maxWidth: '100%',
-        helloFromGrunt: true
+        helloFromGrunt: 'darken(red, 10%)'
       }
     },
     src: 'test/input/variables.less',
