@@ -38,7 +38,6 @@
   },
   "peerDependencies": {
     "grunt": "~0.4.5",
-    "less": "^1.7.3"
   },
   "keywords": [
     "gruntplugin",
