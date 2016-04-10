@@ -45,6 +45,10 @@ module.exports = function (grunt) {
         }
 
         parser.parse(content, function (err, tree) {
+          if( err !== null ) {
+            var message = 'Error in ' + err.filename + ':' + err.line + ' - ' + err.message;
+            grunt.fail.warn(message);
+          }
           var env = new less.tree.evalEnv();
           var ruleset = tree.eval(env); // jshint ignore:line
 
