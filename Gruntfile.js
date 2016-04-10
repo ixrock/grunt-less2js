@@ -62,7 +62,23 @@ module.exports = function(grunt) {
         },
         src: 'test/input/variables.less',
         dest: 'test/output/node-vars.js'
+      },
+      webjs: {
+        options: {
+          format: 'webjs'
+        },
+        src: 'test/input/variables.less',
+        dest: 'test/output/webjs.js'
+      },
+      windowVariable: {
+        options: {
+          format: 'webjs',  
+          windowVariable: 'testVariable'
+        },
+        src: 'test/input/variables.less',
+        dest: 'test/output/windowVariable.js'
       }
+      
     },
 
     // Unit tests.

@@ -48,7 +48,8 @@ Type: `String`
 Default value: `'json'`
 
 A type of output file contents. 
-Available values: `'json'` (basic valid json), `'ng'` (angular-js module), `'commonjs'` (node-js module) 
+Available values: `'json'` (basic valid json), `'ng'` (angular-js module), `'commonjs'` (node-js module), 
+`webjs` (js to assign to window variable; see also `windowVariable` below) 
 
 #### options.ignoreWithPrefix
 Type: `String`
@@ -97,6 +98,13 @@ Default value: `'%output filename without extension%'`
 
 A name of constant service for the output angular.js module
 This option applicable only with options.format = `'ng'`
+
+#### options.windowVariable
+Type: `String`
+Default value: `less2js`
+
+The name of key on the global `window` to load the generated variables object.  
+This option applicable only with options.format = `'webjs'`
 
 ### Usage Examples
 
