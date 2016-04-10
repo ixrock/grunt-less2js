@@ -17,14 +17,15 @@ module.exports = function (grunt) {
     var lessVars = {};
     var options = this.options({
       banner:              '// DO NOT EDIT! GENERATED AUTOMATICALLY with grunt-less2js',
-      format: 'json',       // available values: "json", "ng", "commonjs"
+      format: 'json',       // available values: "json", "ng", "commonjs", "webjs"
       ngModule: '',         // angular-js module name (applicable only when format="ng")
       ngConstant: '',       // angular-js injectable constant name (applicable only when format="ng")
       ignoreWithPrefix: '', // any valid string e.g. "_" would ignore @_base
       camelCase: false,     // convert variable names to camel-case format (@my-var in less => myVar in js)
       parseNumbers: false,  // convert strings that contains only numbers to normal decimal format
       unwrapStrings: false, // remove extra quotes, ex. for @something: 'my string' by default => "'my string'"
-      modifyVars: null      // override output result with predefined set of variables in the task
+      modifyVars: null,     // override output result with predefined set of variables in the task
+      windowVariable: 'less2js'  // window (global) variable to assign object of variables to. (applicable only when format="webjs").  
     });
 
     // parse, eval and save less-variables to js-object
@@ -45,6 +46,10 @@ module.exports = function (grunt) {
         }
 
         parser.parse(content, function (err, tree) {
+          if( err !== null ) {
+            var message = 'Error in ' + err.filename + ':' + err.line + ' - ' + err.message;
+            grunt.fail.warn(message);
+          }
           var env = new less.tree.evalEnv();
           var ruleset = tree.eval(env); // jshint ignore:line
 
@@ -105,6 +110,9 @@ module.exports = function (grunt) {
           break;
         case 'commonjs':
           output = 'module.exports = ' + output + ';';
+          break;
+        case 'webjs':
+          output = 'window.' + options.windowVariable + ' = ' + output + ';';
           break;
       }
 
