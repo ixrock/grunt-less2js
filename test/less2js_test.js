@@ -39,13 +39,13 @@ exports.less2js = {
     test.done();
   },
   it_exports_webjs: function (test) {
-    global.window = {}
+    global.window = {};
     require('../test/output/webjs.js');
     test.ok(_.isPlainObject(global.window.less2js), 'Export as webjs module works fine');
     test.done();
   },
   it_names_window_var: function (test) {
-    global.window = {}
+    global.window = {};
     require('../test/output/windowVariable.js');
     test.ok(_.isPlainObject(global.window.testVariable), 'Export as custom window variable works fine');
     test.done();
