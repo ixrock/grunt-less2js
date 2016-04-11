@@ -38,6 +38,18 @@ exports.less2js = {
     test.ok(_.isPlainObject(outputJson), 'Export as common-js/node-js module works fine');
     test.done();
   },
+  it_exports_webjs: function (test) {
+    global.window = {}
+    require('../test/output/webjs.js');
+    test.ok(_.isPlainObject(global.window.less2js), 'Export as webjs module works fine');
+    test.done();
+  },
+  it_names_window_var: function (test) {
+    global.window = {}
+    require('../test/output/windowVariable.js');
+    test.ok(_.isPlainObject(global.window.testVariable), 'Export as custom window variable works fine');
+    test.done();
+  },
   test_other_options: function(test) {
     var normalJson = grunt.file.readJSON('test/output/variables.json');
     var modifiedJson = require('../test/output/node-vars.js');
